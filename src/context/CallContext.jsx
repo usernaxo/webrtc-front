@@ -72,6 +72,8 @@ export const CallProvider = ({ children }) => {
       setTargetUserId(data.callerUserId);
       setCurrentOffer(data.offer);
 
+      console.log(`OFERTA RECIBIDA: ${data}`);
+
     };
 
     const handleCallAnswered = async (data) => {
