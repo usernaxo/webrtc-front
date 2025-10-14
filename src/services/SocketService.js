@@ -10,7 +10,7 @@ class SocketService {
 
     const server = "https://webrtc.usernaxo.com";
 
-    this.socket = io(server, {transports: ["websocket"]});
+    this.socket = io(server, {transports: ["websocket", "polling"]});
 
     this.socket.on("connect", () => console.log("Socket connected"));
     this.socket.on("disconnect", () => console.log("Socket disconnected"));
