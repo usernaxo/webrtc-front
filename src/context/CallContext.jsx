@@ -55,6 +55,8 @@ export const CallProvider = ({ children }) => {
       
       try {
 
+        console.log(`CANDIDATE RECIBIDO: ${data}`);
+
         await webRTCService.addCandidate(data.candidate);
 
       } catch (e) {
