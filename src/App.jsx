@@ -1,27 +1,21 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { UsersProvider } from "./context/UsersContext";
-import { CallProvider } from "./context/CallContext";
-
-import UsersScreen from "./pages/UsersScreen";
-import NewCallScreen from "./pages/NewCallScreen";
-import CallScreen from "./pages/CallScreen";
+import { BrowserRouter } from "react-router-dom";
+import { SocketProvider } from "./providers/SocketProvider"
+import { UsersProvider } from "./providers/UsersProvider";
+import { CallProvider } from "./providers/CallProvider";
+import AppRoutes from "./routes/AppRoutes";
 
 const App = () => {
   return (
-    <UsersProvider>
-      <CallProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<UsersScreen />} />
-            <Route path="/new-call" element={<NewCallScreen />} />
-            <Route path="/call" element={<CallScreen />} />
-            {/* Redirigir cualquier ruta desconocida */}
-            <Route path="*" element={<Navigate to="/users" replace />} />
-          </Routes>
-        </Router>
-      </CallProvider>
-    </UsersProvider>
+    <SocketProvider>
+      <UsersProvider>
+        <CallProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </CallProvider>
+      </UsersProvider>
+    </SocketProvider>
   );
 };
 

@@ -1,0 +1,276 @@
+import { useState, useEffect, useRef } from "react";
+import { useSocket } from "../hooks/useSocket";
+import { CallContext } from "../context/CallContext";
+import { webRTCService } from "../services/WebRTCService";
+
+export const CallProvider = ({ children }) => {
+
+  const socket = useSocket();
+
+  const [localStream, setLocalStream] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
+  const [targetUserId, setTargetUserId] = useState(null);
+  const [currentOffer, setCurrentOffer] = useState(null);
+  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [videoEnabled, setVideoEnabled] = useState(false);
+  const [inCall, setInCall] = useState(false);
+  const [localStreamError, setLocalStreamError] = useState(false);
+  const [messages, setMessages] = useState([]);
+
+  const targetUserIdRef = useRef(null);
+
+  useEffect(() => { targetUserIdRef.current = targetUserId }, [targetUserId]);
+
+  useEffect(() => {
+
+    if (!socket) return;
+
+    webRTCService.onIceCandidate = (candidate) => {
+
+      const currentTargetId = targetUserIdRef.current;
+      
+      if (!currentTargetId) return;
+
+      socket.emit("ice-candidate", { 
+        targetUserId: currentTargetId, 
+        candidate 
+      });
+
+    };
+
+    webRTCService.onTrack = (remote) => {
+
+      setRemoteStream(remote);
+
+    };
+
+    webRTCService.onDataChannelMessage = (message) => {
+
+      setMessages(prev => [{ text: message, fromMe: false }, ...prev]);
+
+    };
+
+    const handleIceCandidate = async (data) => {
+      
+      try {
+
+        await webRTCService.addCandidate(data.candidate);
+
+      } catch (e) {
+
+        console.error(e);
+
+      }
+
+    };
+
+    const handleReceivingCall = (data) => {
+
+      setTargetUserId(data.callerUserId);
+      setCurrentOffer(data.offer);
+
+    };
+
+    const handleCallAnswered = async (data) => {
+      
+      try {
+
+        await webRTCService.setRemoteDescription(data.answer);
+        
+        setAudioEnabled(true);
+        setVideoEnabled(true);
+        setInCall(true);
+
+      } catch (e) {
+
+        console.error(e);
+
+      }
+
+    };
+
+    const handleCallEnded = async () => {
+      
+      await webRTCService.close();
+      
+      setTargetUserId(null);
+      setCurrentOffer(null);
+      setAudioEnabled(false);
+      setVideoEnabled(false);
+      setInCall(false);
+      setLocalStream(null);
+      setRemoteStream(null);
+      setMessages([]);
+
+    };
+
+    socket.on("ice-candidate", handleIceCandidate);
+    socket.on("receiving-call", handleReceivingCall);
+    socket.on("call-answered", handleCallAnswered);
+    socket.on("call-ended", handleCallEnded);
+
+    return () => {
+      socket.off("ice-candidate", handleIceCandidate);
+      socket.off("receiving-call", handleReceivingCall);
+      socket.off("call-answered", handleCallAnswered);
+      socket.off("call-ended", handleCallEnded);
+    };
+
+  }, [socket]);
+
+  const startCall = async (targetId) => {
+
+    try {
+      
+      setTargetUserId(targetId);
+      
+      const stream = await webRTCService.initLocalStream();
+      
+      setLocalStream(stream);
+      setLocalStreamError(!stream && webRTCService.hasLocalStreamError());
+
+      await webRTCService.createPeer();
+
+      const offer = await webRTCService.createOffer();
+
+      socket?.emit("call", {
+        targetUserId: targetId,
+        offer: offer
+      });
+      
+    } catch (e) {
+
+      console.error(e);
+
+      setTargetUserId(null);
+      setLocalStreamError(true);
+
+    }
+
+  };
+
+  const answerCall = async () => {
+
+    if (!targetUserId || !currentOffer) return;
+
+    try {
+      
+      const stream = await webRTCService.initLocalStream();
+
+      setLocalStream(stream);
+      setLocalStreamError(!stream && webRTCService.hasLocalStreamError());
+
+      await webRTCService.createPeer();
+      await webRTCService.setRemoteDescription(currentOffer);
+
+      const answer = await webRTCService.createAnswer();
+
+      socket?.emit("answer-call", {
+        targetUserId,
+        answer: answer
+      });
+
+      setAudioEnabled(true);
+      setVideoEnabled(true);
+      setInCall(true);
+      setCurrentOffer(null);
+      
+    } catch (e) {
+
+      console.error(e);
+      setLocalStreamError(true);
+
+    }
+
+  };
+
+  const rejectCall = async () => {
+
+    if (!targetUserId) return;
+    
+    socket?.emit("end-call", { targetUserId });
+
+    setTargetUserId(null);
+    setCurrentOffer(null);
+    setAudioEnabled(false);
+    setVideoEnabled(false);
+    setInCall(false);
+    setMessages([]);
+
+  };
+
+  const toggleAudio = () => {
+
+    const newState = !audioEnabled;
+
+    setAudioEnabled(newState);
+
+    webRTCService.toggleAudio(newState);
+
+  };
+
+  const toggleVideo = () => {
+
+    const newState = !videoEnabled;
+
+    setVideoEnabled(newState);
+
+    webRTCService.toggleVideo(newState);
+
+  };
+
+  const sendMessage = (message) => {
+
+    webRTCService.sendMessage(message);
+
+    setMessages(prev => [{ text: message, fromMe: true }, ...prev]);
+
+  };
+
+  const hangUp = async () => {
+    
+    await webRTCService.close();
+
+    if (targetUserId) {
+
+        socket?.emit("end-call", { targetUserId });
+
+    }
+
+    setTargetUserId(null);
+    setCurrentOffer(null);
+    setAudioEnabled(false);
+    setVideoEnabled(false);
+    setInCall(false);
+    setLocalStream(null);
+    setRemoteStream(null);
+    setMessages([]);
+    
+  };
+
+  return (
+    <CallContext.Provider
+      value={{
+        targetUserId,
+        targetOffer: currentOffer,
+        audioEnabled,
+        videoEnabled,
+        inCall,
+        localStream,
+        remoteStream,
+        localStreamError,
+        startCall,
+        answerCall,
+        rejectCall,
+        sendMessage,
+        toggleAudio,
+        toggleVideo,
+        hangUp,
+        messages
+      }}
+    >
+      {children}
+    </CallContext.Provider>
+  );
+
+};

@@ -1,34 +1,34 @@
-import React, { useEffect, useRef } from "react";
-import { useCall } from "../context/CallContext";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdCall, MdCallEnd } from "react-icons/md";
+import { useCall } from "../hooks/useCall";
 
 const NewCallScreen = () => {
 
   const call = useCall();
+
   const audioRef = useRef(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
 
-    if (!call.inCall && !call.targetUserId) {
-
-      navigate("/");
-
-    }
+    if (!call.inCall && !call.targetUserId) navigate("/");
 
   }, [call.inCall, call.targetUserId, navigate]);
 
   useEffect(() => {
 
-    if (audioRef.current) audioRef.current.play().catch((e) => console.warn(e));
+    const audio = audioRef.current;
+
+    if (audio) audio.play().catch((e) => console.warn(e));
 
     return () => {
 
-      if (audioRef.current) {
+      if (audio) {
 
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+        audio.pause();
+        audio.currentTime = 0;
 
       }
 

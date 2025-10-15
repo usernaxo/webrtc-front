@@ -1,23 +1,20 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUsers } from "../context/UsersContext";
-import { useCall } from "../context/CallContext";
-import UserTile from "../components/UserTile";
 import { MdPerson } from "react-icons/md";
+import { useCall } from "../hooks/useCall";
+import { useUsers } from "../hooks/useUsers";
+import UserTile from "../components/UserTile";
 
 const UsersScreen = () => {
 
-  const { users, userId, updateUserId } = useUsers();
   const call = useCall();
+  const { users, userId, updateUserId } = useUsers();
+  
   const navigate = useNavigate();
 
   useEffect(() => {
 
-    if (call.targetUserId && call.targetOffer && !call.inCall) {
-
-      navigate("/new-call");
-
-    }
+    if (call.targetUserId && call.targetOffer && !call.inCall) navigate("/new-call");
 
   }, [call.targetUserId, call.targetOffer, call.inCall, navigate]);
 

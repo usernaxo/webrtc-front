@@ -1,20 +1,22 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useCall } from "../context/CallContext";
-import { useUsers } from "../context/UsersContext";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import VideoPlayer from "../components/VideoPlayer";
-import { playSound } from "../utils/SoundPlayer";
 import { MdVideocam, MdVideocamOff, MdMic, MdMicOff, MdCallEnd, MdSend } from "react-icons/md";
+import { useCall } from "../hooks/useCall";
+import { useUsers } from "../hooks/useUsers";
+import { playSound } from "../utils/SoundPlayer";
+import VideoPlayer from "../components/VideoPlayer";
 
 const CallScreen = () => {
 
   const call = useCall();
   const { userId } = useUsers();
   const { messages, sendMessage } = useCall();
-  const [message, setMessage] = React.useState("");
+  const [message, setMessage] = useState("");
   const [callDuration, setCallDuration] = useState(0);
+
   const inCallRef = useRef(false);
   const firstMessage = useRef(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,19 +46,19 @@ const CallScreen = () => {
   useEffect(() => {
 
     if (call.messages.length === 0) return;
-
+  
+    const lastMessage = call.messages[0];
+  
     if (firstMessage.current) {
 
       firstMessage.current = false;
 
-      return;
+      if (lastMessage.fromMe) return;
 
     }
-
-    const lastMessage = call.messages[0];
-
+  
     if (!lastMessage.fromMe) playSound("newMessage");
-    
+
   }, [call.messages]);
 
   useEffect(() => {
@@ -125,7 +127,7 @@ const CallScreen = () => {
         <div className="w-1/3 flex flex-col pl-3">
 
           {/* Local stream */}
-          <div className="flex-1 max-h-[40%] rounded-xl flex items-center justify-center overflow-hidden relative">
+          <div className="h-[40%] flex items-center justify-center rounded-xl overflow-hidden relative">
             <VideoPlayer stream={call.localStream} className="w-full h-full object-cover scale-x-[-1]"/>
             {/* Local id */}
             {
@@ -140,7 +142,7 @@ const CallScreen = () => {
           </div>
 
           {/* Chat */}
-          <div className="flex-1 max-h-[60%] rounded-xl flex flex-col items-center justify-center mt-3 bg-gray-900">
+          <div className="h-[60%] flex flex-col mt-3 rounded-xl bg-gray-900 overflow-hidden">
             
             {/* Messages */}
             <div className="w-full flex-1 flex flex-col-reverse overflow-y-auto p-3">

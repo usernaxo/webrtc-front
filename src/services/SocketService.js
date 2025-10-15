@@ -2,52 +2,34 @@ import { io } from "socket.io-client";
 
 class SocketService {
 
-  constructor() {
-    this.socket = null;
-  }
+  socket = null;
 
   init() {
 
+    if (this.socket) return this.socket;
+
     const server = "https://webrtc.usernaxo.com";
 
-    this.socket = io(server, {transports: ["websocket", "polling"]});
+    this.socket = io(server, { transports: ["websocket", "polling"] });
 
     this.socket.on("connect", () => console.log("Socket connected"));
     this.socket.on("disconnect", () => console.log("Socket disconnected"));
 
-  }
-  
-  onConnect(callback) {
-
-    this.socket?.on("connect", () => callback());
-
-  }
-
-  on(event, handler) {
-
-    this.socket?.on(event, handler);
-
-  }
-
-  off(event, handler) {
-
-    this.socket?.off(event, handler);
-
-  }
-
-  emit(event, data) {
-
-    this.socket?.emit(event, data);
+    return this.socket;
 
   }
 
   dispose() {
 
-    this.socket?.disconnect();
-    this.socket = null;
+    if (this.socket) {
+
+      this.socket.disconnect();
+      this.socket = null;
+
+    }
 
   }
-
+  
 }
 
 export const socketService = new SocketService();
