@@ -6,13 +6,13 @@ const sounds = {
 
 export const playSound = (type) => {
 
-    const sound = sounds[type];
+    // const sound = sounds[type];
 
-    if (!sound) return;
+    // if (!sound) return;
 
-    sound.pause();
-    sound.currentTime = 0;
+    // sound.pause();
+    // sound.currentTime = 0;
 
-    sound.play().catch(e => console.warn(e));
+    // sound.play().catch(e => console.warn(e));
 
 };
