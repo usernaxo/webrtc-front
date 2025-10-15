@@ -2,14 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdVideocam, MdVideocamOff, MdMic, MdMicOff, MdCallEnd, MdSend } from "react-icons/md";
 import { useCall } from "../hooks/useCall";
-import { useUsers } from "../hooks/useUsers";
 import { playSound } from "../utils/SoundPlayer";
 import VideoPlayer from "../components/VideoPlayer";
 
 const CallScreen = () => {
 
   const call = useCall();
-  const { userId } = useUsers();
   const { messages, sendMessage } = useCall();
   const [message, setMessage] = useState("");
   const [callDuration, setCallDuration] = useState(0);
@@ -92,18 +90,18 @@ const CallScreen = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gray-800 text-white">
+    <div className="h-screen w-screen flex flex-col p-3 bg-gray-800 text-white">
       {/* Main */}
-      <div className="h-[calc(100vh-5.5rem)] flex pl-3 pt-3 pr-3">
+      <div className="h-[calc(100vh-6.25rem)] flex flex-col md:flex-row">
 
         {/* Left */}
-        <div className="flex-1 flex justify-center items-center bg-gray-900 rounded-xl relative">
+        <div className="h-[calc((100vh-5rem)/2)] md:h-full md:flex-1 flex justify-center items-center bg-gray-900 rounded-xl relative">
           {/* Remote stream */}
           {
             call.inCall ? (
               call.remoteStream ? (
                 <>
-                  <VideoPlayer stream={call.remoteStream} className="w-full h-full scale-x-[-1]" />
+                  <VideoPlayer stream={call.remoteStream} className="w-full h-[calc((100vh-5rem)/2)] md:h-full scale-x-[-1]" />
                   {/* Remote id */}
                   {
                     call.targetUserId ? <h3 className="absolute top-3 left-3 font-bold text-sm py-1 px-3 rounded-md bg-black/50">{call.targetUserId}</h3> : null
@@ -121,18 +119,22 @@ const CallScreen = () => {
               </div>
             )
           }
+          <div className="w-32 h-24 items-center justify-center rounded-xl overflow-hidden bottom-3 right-3 absolute flex md:hidden">
+            <VideoPlayer stream={call.localStream} className="w-full h-full object-cover scale-x-[-1] opacity-75"/>
+            {
+              !call.localStream && call.localStreamError ? <div className="absolute flex flex-col items-center justify-center inset-0 bg-gray-800">
+                <span className="text-3xl font-bold">!</span>
+              </div> : null
+            }
+          </div>
         </div>
 
         {/* Right */}
-        <div className="w-1/3 flex flex-col pl-3">
+        <div className="w-full md:w-1/3 flex flex-col md:pl-3">
 
           {/* Local stream */}
-          <div className="h-[40%] flex items-center justify-center rounded-xl overflow-hidden relative">
+          <div className="h-[40%] hidden md:flex items-center justify-center rounded-xl overflow-hidden relative">
             <VideoPlayer stream={call.localStream} className="w-full h-full object-cover scale-x-[-1]"/>
-            {/* Local id */}
-            {
-              userId ? <h3 className="absolute top-3 right-3 font-bold text-sm py-1 px-3 rounded-md bg-black/50">{userId}</h3> : null
-            }
             {
               !call.localStream && call.localStreamError ? <div className="absolute flex flex-col items-center justify-center inset-0 bg-gray-900">
               <span className="text-3xl font-bold">!</span>
@@ -142,7 +144,7 @@ const CallScreen = () => {
           </div>
 
           {/* Chat */}
-          <div className="h-[60%] flex flex-col mt-3 rounded-xl bg-gray-900 overflow-hidden">
+          <div className="h-[calc((100vh-9rem)/2)] md:h-[60%] flex flex-col mt-3 rounded-xl bg-gray-900 overflow-hidden">
             
             {/* Messages */}
             <div className="w-full flex-1 flex flex-col-reverse overflow-y-auto p-3 scrollbar scrollbar-thumb-gray-800 scrollbar-track-gray-900">
@@ -199,14 +201,14 @@ const CallScreen = () => {
       </div>
 
       {/* Bottom nav */}
-      <nav className="h-16 bg-gray-900 rounded-xl flex justify-between items-center m-3 p-3">
-        <h3 className="">
-          {call.inCall ? "Llamada en curso" : null}
+      <nav className="h-16 bg-gray-900 rounded-xl flex justify-between items-center mt-3 p-3">
+        <h3 className="flex-1" >
+          {call.inCall ? "En llamada" : null}
         </h3>
         {
-          call.inCall ? <span className=" text-gray-400">{formatDuration(callDuration)}</span> : null
+          call.inCall ? <span className="flex-1 flex justify-center text-gray-400">{formatDuration(callDuration)}</span> : null
         }
-        <div className="flex space-x-3">
+        <div className="flex-1 flex justify-end space-x-2">
           <button
             onClick={call.toggleVideo}
             className={`w-11 h-11 rounded-full ${call.videoEnabled ? "bg-blue-500" : "bg-gray-800"} flex items-center justify-center relative`}>
