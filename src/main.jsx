@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import "./index.css"; // Tailwind CSS o estilos globales
+import "./index.css";
 import { socketService } from "./services/SocketService";
 
 socketService.init();

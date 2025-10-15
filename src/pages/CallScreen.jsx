@@ -3,7 +3,7 @@ import { useCall } from "../context/CallContext";
 import { useUsers } from "../context/UsersContext";
 import { useNavigate } from "react-router-dom";
 import VideoPlayer from "../components/VideoPlayer";
-//import { playSound } from "../utils/SoundPlayer";
+import { playSound } from "../utils/SoundPlayer";
 import { MdVideocam, MdVideocamOff, MdMic, MdMicOff, MdCallEnd, MdSend } from "react-icons/md";
 
 const CallScreen = () => {
@@ -19,7 +19,7 @@ const CallScreen = () => {
 
   useEffect(() => {
 
-    if (!call.inCall && !call.targetUserId) navigate("/users");
+    if (!call.inCall && !call.targetUserId) navigate("/");
 
   }, [call.inCall, call.targetUserId, navigate]);
 
@@ -27,13 +27,13 @@ const CallScreen = () => {
 
     if (call.inCall && !inCallRef.current) {
 
-      //playSound("callStart");
+      playSound("callStart");
 
     }
   
     if (!call.inCall && inCallRef.current) {
 
-      //playSound("callEnd");
+      playSound("callEnd");
 
     }
   
@@ -55,7 +55,7 @@ const CallScreen = () => {
 
     const lastMessage = call.messages[0];
 
-    //if (!lastMessage.fromMe) playSound("newMessage");
+    if (!lastMessage.fromMe) playSound("newMessage");
     
   }, [call.messages]);
 

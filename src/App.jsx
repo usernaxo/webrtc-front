@@ -13,7 +13,7 @@ const App = () => {
       <CallProvider>
         <Router>
           <Routes>
-            <Route path="/users" element={<UsersScreen />} />
+            <Route path="/" element={<UsersScreen />} />
             <Route path="/new-call" element={<NewCallScreen />} />
             <Route path="/call" element={<CallScreen />} />
             {/* Redirigir cualquier ruta desconocida */}

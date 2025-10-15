@@ -13,7 +13,7 @@ const NewCallScreen = () => {
 
     if (!call.inCall && !call.targetUserId) {
 
-      navigate("/users");
+      navigate("/");
 
     }
 
