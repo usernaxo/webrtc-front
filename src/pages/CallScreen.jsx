@@ -145,7 +145,7 @@ const CallScreen = () => {
           <div className="h-[60%] flex flex-col mt-3 rounded-xl bg-gray-900 overflow-hidden">
             
             {/* Messages */}
-            <div className="w-full flex-1 flex flex-col-reverse overflow-y-auto p-3">
+            <div className="w-full flex-1 flex flex-col-reverse overflow-y-auto p-3 scrollbar scrollbar-thumb-gray-800 scrollbar-track-gray-900">
               {
                 messages.map((message, index) => (
                   <div key={index} className={`p-3 rounded-xl max-w-[70%] mb-3 ${message.fromMe ? "self-end bg-blue-600" : "self-start bg-gray-800"}`}>

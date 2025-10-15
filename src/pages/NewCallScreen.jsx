@@ -57,11 +57,11 @@ const NewCallScreen = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-md">
+    <div className="h-screen w-screen flex flex-col items-center justify-center bg-gray-800 text-white">
       
       <audio ref={audioRef} src="/sounds/new-call.mp3" loop />
 
-      <p className="mb-4 font-bold animate-bounce text-white">Llamada entrante</p>
+      <p className="mb-4 font-bold animate-bounce">Llamada entrante</p>
       <p className="mb-6 text-3xl truncate font-bold animate-pulse text-gray-300">{call.targetUserId}</p>
 
       <div className="flex gap-3">

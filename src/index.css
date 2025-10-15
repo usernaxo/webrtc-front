@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin 'tailwind-scrollbar';
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -56,12 +57,9 @@ button:focus-visible {
   a:hover {
     color: #747bff;
   }
-  button {
-    background-color: #f9f9f9;
-  }
 }
 
 ::selection {
-  background-color: theme('colors.blue.600'); /* puedes usar cualquier color Tailwind */
+  background-color: theme('colors.blue.600');
   color: white;
 }

@@ -22,7 +22,7 @@ const UsersScreen = () => {
     
     <div className="h-screen w-screen bg-gray-800 text-white">
 
-      <nav className="h-16 bg-gray-900 flex justify-between items-center px-3">
+      <nav className="h-16 flex justify-between items-center px-3 bg-gray-900">
         <h3 className="font-bold">WebRTC</h3>
         <div className="flex items-center gap-2">
           <input
@@ -37,7 +37,7 @@ const UsersScreen = () => {
         </div>
       </nav>
 
-      <main className="p-3 flex flex-col">
+      <main className="h-[calc(100vh-4rem)] overflow-y-auto scrollbar scrollbar-thumb-gray-700 scrollbar-track-gray-800 p-3">
         {
           users.length === 0 ? (
             <div className="flex flex-col">
