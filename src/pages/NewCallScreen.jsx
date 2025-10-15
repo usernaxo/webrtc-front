@@ -52,7 +52,7 @@ const NewCallScreen = () => {
     
     await call.rejectCall();
 
-    navigate("/users", { replace: true });
+    navigate("/", { replace: true });
 
   };
 
