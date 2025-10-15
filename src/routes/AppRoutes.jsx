@@ -3,7 +3,7 @@ import UsersScreen from "../pages/UsersScreen";
 import NewCallScreen from "../pages/NewCallScreen";
 import CallScreen from "../pages/CallScreen";
 
-export const AppRoutes = () => (
+const AppRoutes = () => (
   <Routes>
     <Route path="/" element={<UsersScreen />} />
     <Route path="/new-call" element={<NewCallScreen />} />
@@ -11,3 +11,5 @@ export const AppRoutes = () => (
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
 );
+
+export default AppRoutes;
