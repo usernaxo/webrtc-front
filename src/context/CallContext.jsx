@@ -80,6 +80,8 @@ export const CallProvider = ({ children }) => {
       
       try {
 
+        console.log(`ANSWER RECIBIDA: ${data}`);
+
         await webRTCService.setRemoteDescription(data.answer);
         
         setAudioEnabled(true);
