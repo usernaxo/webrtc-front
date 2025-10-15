@@ -1,7 +1,7 @@
 const sounds = {
-    callStart: new Audio("/sounds/start-call.mp3"),
-    callEnd: new Audio("/sounds/end-call.mp3"),
-    newMessage: new Audio("/sounds/new-message.mp3"),
+    // callStart: new Audio("/sounds/start-call.mp3"),
+    // callEnd: new Audio("/sounds/end-call.mp3"),
+    // newMessage: new Audio("/sounds/new-message.mp3"),
 };
 
 export const playSound = (type) => {
