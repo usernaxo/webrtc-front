@@ -199,6 +199,14 @@ export const CallProvider = ({ children }) => {
 
   };
 
+  const changeDevice = async ({ cameraId, micId }) => {
+
+    const newStream = await webRTCService.changeDevice({ cameraId, micId });
+
+    if (newStream) setLocalStream(newStream);
+    
+  };
+
   const toggleAudio = () => {
 
     const newState = !audioEnabled;
@@ -262,9 +270,10 @@ export const CallProvider = ({ children }) => {
         startCall,
         answerCall,
         rejectCall,
-        sendMessage,
+        changeDevice,
         toggleAudio,
         toggleVideo,
+        sendMessage,
         hangUp,
         messages
       }}

@@ -1,5 +1,59 @@
 @import "tailwindcss";
 @plugin 'tailwind-scrollbar';
+@tailwind utilities;
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer utilities {
+
+  .background-primary {
+    @apply bg-white dark:bg-neutral-900
+  }
+  .background-secondary {
+    @apply bg-neutral-100 dark:bg-neutral-800
+  }
+  .background-tertiary {
+    @apply bg-neutral-200 dark:bg-neutral-950
+  }
+
+  .border-primary {
+    @apply border-neutral-200 dark:border-neutral-800
+  }
+
+  .text-title {
+    @apply text-black dark:text-white font-bold
+  }
+  .text-subtitle {
+    @apply text-neutral-700 dark:text-neutral-100 font-semibold
+  }
+  .text-description {
+    @apply text-neutral-700 dark:text-neutral-100 text-sm
+  }
+  .text-hint {
+    @apply text-neutral-500 text-sm
+  }
+  .text-error {
+    @apply text-red-400
+  }
+
+  .text-primary {
+    @apply text-indigo-400
+  }
+
+  .button-primary {
+    @apply bg-indigo-700 text-white
+  }
+  .button-secondary {
+    @apply bg-neutral-200 hover:bg-neutral-300 text-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-700 dark:text-neutral-100
+  }
+  .button-red {
+    @apply bg-red-700 text-white
+  }
+
+  .scrollbar {
+    @apply scrollbar-thumb-neutral-200 dark:scrollbar-thumb-neutral-800 scrollbar-track-transparent
+  }
+
+}
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -7,8 +61,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: theme('colors.neutral.900');
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -60,6 +113,6 @@ button:focus-visible {
 }
 
 ::selection {
-  background-color: theme('colors.blue.600');
+  background-color: theme('colors.indigo.400');
   color: white;
 }

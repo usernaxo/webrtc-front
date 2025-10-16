@@ -193,6 +193,95 @@ class WebRTCService {
 
   }
 
+  async changeDevice({ cameraId, micId }) {
+
+    if (!this.peerConnection || !this.localStream) return;
+  
+    try {
+
+      const currentVideoTrack = this.localStream.getVideoTracks()[0];
+      const currentAudioTrack = this.localStream.getAudioTracks()[0];
+  
+      const currentCameraId = currentVideoTrack?.getSettings()?.deviceId;
+      const currentMicId = currentAudioTrack?.getSettings()?.deviceId;
+  
+      const videoEnabled = currentVideoTrack?.enabled ?? true;
+      const audioEnabled = currentAudioTrack?.enabled ?? true;
+
+      const constraints = {
+        video: cameraId ? {
+          deviceId: {
+            exact: cameraId
+          }
+        } : currentCameraId ? {
+          deviceId: {
+            exact: currentCameraId
+          }
+        } : true,
+        audio: micId ? {
+          deviceId: {
+            exact: micId
+          }
+        } : currentMicId ?{
+          deviceId: {
+            exact: currentMicId
+          }
+        } : true
+      };
+
+      const newStream = await navigator.mediaDevices.getUserMedia(constraints);
+  
+      const newVideoTrack = newStream.getVideoTracks()[0];
+      const newAudioTrack = newStream.getAudioTracks()[0];
+  
+      const senderVideo = this.peerConnection.getSenders().find((s) => s.track && s.track.kind === "video");
+      const senderAudio = this.peerConnection.getSenders().find((s) => s.track && s.track.kind === "audio");
+
+      if (senderVideo && newVideoTrack) {
+
+        await senderVideo.replaceTrack(newVideoTrack);
+
+        newVideoTrack.enabled = videoEnabled;
+
+        if (currentVideoTrack) {
+
+          this.localStream.removeTrack(currentVideoTrack);
+
+          currentVideoTrack.stop();
+
+        }
+
+        this.localStream.addTrack(newVideoTrack);
+      }
+  
+      if (senderAudio && newAudioTrack) {
+
+        await senderAudio.replaceTrack(newAudioTrack);
+        
+        newAudioTrack.enabled = audioEnabled;
+
+        if (currentAudioTrack) {
+
+          this.localStream.removeTrack(currentAudioTrack);
+
+          currentAudioTrack.stop();
+
+        }
+
+        this.localStream.addTrack(newAudioTrack);
+
+      }
+  
+      return this.localStream;
+
+    } catch (e) {
+
+      console.error(e);
+
+    }
+
+  }
+
   toggleAudio(enabled) {
 
     if (this.localStream) {
